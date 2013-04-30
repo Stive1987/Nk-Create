@@ -20,8 +20,12 @@ function top()
     <link rel="stylesheet" type="text/css" href="themes/Nk-Create_VIII/css/login.css">
     <link rel="stylesheet" type="text/css" href="themes/Nk-Create_VIII/css/flexslider.css">
     <link rel="stylesheet" type="text/css" href="themes/Nk-Create_VIII/css/prettyPhoto.css">
-    <link rel="stylesheet" type="text/css" href="themes/Nk-Create_VIII/css/modules/<?php echo $_REQUEST['file']; ?>.css">
     <link rel=stylesheet href="themes/Nk-Create_VIII/css/style.css">
+<?php
+if(file_exists("themes/Nk-Create_VIII/css/modules/" . $_REQUEST['file'] . ".css")) {
+echo '<link rel="stylesheet" type="text/css" href="themes/Nk-Create_VIII/css/modules/' . $_REQUEST['file'] . '.css">';
+}
+?> 
     <!--[if lt IE 9]>
     <link href="themes/Nk-Create_VIII/css/ie8.css" rel="stylesheet" type="text/css" />
     <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
@@ -34,6 +38,11 @@ function top()
     <script type="text/javascript" src='themes/Nk-Create_VIII/js/jquery.placeholder.min.js'></script>
     <script type="text/javascript" src='themes/Nk-Create_VIII/js/bootstrap.min.js'></script>
     <script type="text/javascript" src='themes/Nk-Create_VIII/js/jquery.ticker.js'></script>
+<?php
+if(file_exists("themes/Nk-Create_VIII/js/modules/" . $_REQUEST['file'] . ".js")) {
+echo '<script type="text/javascript" src="themes/Nk-Create_VIII/js/modules/' . $_REQUEST['file'] . '.js"></script>';
+}
+?> 
 </head>
 <body>
 <header>
