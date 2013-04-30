@@ -23,88 +23,87 @@ if ($visiteur >= $level_access && $level_access > -1) {
 
         global $nuked, $visiteur;
 
-        echo "<br /><div style=\"text-align: center;\"><big><b>" . _DOWNLOAD . "</b></big></div>\n"
-           . "<div style=\"text-align: center;\"><br />\n"
-           . "[ " . _INDEXDOWNLOAD . " | "
-           . "<a href=\"index.php?file=Download&amp;op=classe&amp;orderby=news\" style=\"text-decoration: underline\">" . _NEWSFILE . "</a> | "
-           . "<a href=\"index.php?file=Download&amp;op=classe&amp;orderby=count\" style=\"text-decoration: underline\">" . _POPULAR . "</a> | "
-           . "<a href=\"index.php?file=Suggest&amp;module=Download\" style=\"text-decoration: underline\">" . _SUGGESTFILE . "</a> ]</div>\n";
+?>
+                <div class='row' id="moduleDownload">
+                
+                    <div class='span10 search-result'>
+                        <div class='box-title'>
+                            <h2><?php echo _DOWNLOAD; ?> : <span class='grey'><?php echo _INDEXDOWNLOAD; ?></span></h2>
+                            <div class='title-line'></div>
+                        </div>
+                    </div>
+                    <div class="span2">
+                    	<form>
+                        	<input type="text" />
+                        </form>
+                    </div>     
+<?php
 
-        $sql_nbcat = mysql_query("SELECT cid FROM " . DOWNLOAD_CAT_TABLE);
-        $nb_cat = mysql_num_rows($sql_nbcat);
+        $dbsDonwloadCat = ' SELECT cid
+                            FROM '.DOWNLOAD_CAT_TABLE;
+        $dbeDonwloadCat = mysql_query($dbsDonwloadCat);
+        $dbcDonwloadCat = mysql_num_rows($dbeDonwloadCat);
+		
+        $dbsDonwload = ' SELECT id
+                         FROM '.DOWNLOAD_TABLE;
+        $dbeDonwload = mysql_query($dbsDonwload);
+        $dbcDonwload = mysql_num_rows($dbeDonwload);
 
-        $sql = mysql_query("SELECT id FROM " . DOWNLOAD_TABLE);
-        $nb_download = mysql_num_rows($sql);
+        if ($dbcDonwloadCat > 0) {
+			
+            $dbsDonwloadShow = '  SELECT cid, titre, description, ico
+                            	  FROM '.DOWNLOAD_CAT_TABLE.'
+                            	  WHERE parentid = 0 
+                            	  AND ' . $visiteur . ' >= level
+                            	  ORDER BY position, titre';
+            $dbeDonwloadShow = mysql_query($dbsDonwloadShow);
 
-        if ($nb_cat > 0) {
-            echo "<table style=\"margin-left: auto;margin-right: auto;text-align: left;\" cellspacing=\"15\" cellpadding=\"5\">\n";
+            while (list($cid, $titre, $description, $ico) = mysql_fetch_array($dbeDonwloadShow)) {
 
-            $sql_cat = mysql_query("SELECT cid, titre, description FROM " . DOWNLOAD_CAT_TABLE . " WHERE parentid = 0 AND " . $visiteur . " >= level ORDER BY position, titre");
-            $nb_subcat = mysql_num_rows($sql_cat);
-
-            $test = 0;
-            while (list($cid, $titre, $description) = mysql_fetch_array($sql_cat)) {
                 $titre = printSecuTags($titre);
 
                 $description = icon($description);
+				
+				$href = '<a href="index.php?file=Download&amp;op=categorie&amp;cat=' . $cid . '" title="' . $titre . '">';
 
                 if ($cid != $last_cid) {
-                    $test++;
 
-                    if ($test == 1) {
-                        echo "<tr>";
-                    }
-
-                    echo "<td valign=\"top\"><img src=\"modules/Download/images/fleche.gif\" alt=\"\" /><a href=\"index.php?file=Download&amp;op=categorie&amp;cat=" . $cid . "\"><b>" . $titre . "</b></a>";
-
-                    $sql2 = mysql_query("SELECT type FROM " . DOWNLOAD_TABLE . " WHERE type = '" . $cid . "'");
-                    $nb_dl = mysql_num_rows($sql2);
-
-                    if ($nb_dl > 0) {
-                        echo "<small>&nbsp;(" . $nb_dl . ")</small>";
-                    }
-
-                    if ($description != "") {
-                        echo "<div style=\"width: 225px;\">" . $description . "</div>\n";
+                    if (!empty($description)) {
+                        $description = $description;
                     } else {
-                        echo "<br />";
+                        $description = 'Aucune description';
                     }
-
-                    $t = 0;
-                    $sql_subcat = mysql_query("SELECT cid, titre FROM " . DOWNLOAD_CAT_TABLE . " WHERE parentid = '" . $cid . "' AND " . $visiteur . " >= level ORDER BY position, titre LIMIT 0, 4");
-
-                    while (list($sub_cat_id, $sub_cat_titre) = mysql_fetch_array($sql_subcat)) {
-                        $sub_cat_titre = printSecuTags($sub_cat_titre);
-                        $t++;
-                        if ($t <= 3) echo "<small><a href=\"index.php?file=Download&amp;op=categorie&amp;cat=" . $sub_cat_id . "\">" . $sub_cat_titre . "</a></small>&nbsp;&nbsp;";
-                        else echo "<a href=\"index.php?file=Download&amp;op=categorie&amp;cat=" . $cid . "\"><small>...</small></a>";
-                    }
-
-                    echo "</td>\n";
-
-                    if ($test == 2) {
-                        $test = 0;
-                        echo "</tr>\n";
-                    }
-
-                    $last_cid = $cid;
+?>
+                    <div class='span6 author-box'>
+                        <div class='author'>
+                            <div class="inner-border">
+                                <figure>
+                                    <?php echo $href; ?><img src="<?php echo $ico; ?>" alt="<?php echo $titre; ?></a>">
+                                </figure>
+                                <div class='description'>
+                                    <span class='name'><?php echo $href; ?><?php echo $titre; ?></a></span>
+                                    <div><?php echo $description; ?></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>        
+<?php
                 }
             }
-
-            if ($test == 1) echo "</tr>\n";
-
-            echo "</table>\n";
-        } else {
-            echo "<br />\n";
         }
+?>
+                	<div class='span12'>
+                		<div class='normal-divider'></div>
+                        <div style="text-align: center;">
+                        	<small>
+                            	<i>( <?php echo "" . _THEREIS . "&nbsp;" . $dbcDonwload. "&nbsp;" . _FILES . " &amp; " . $dbcDonwloadCat. "&nbsp;" . _NBCAT . "&nbsp;" . _INDATABASE . ""; ?> ) </i>
+                            </small>
+                        </div>
+                    </div>
+                </div><!-- fin de ID moduleDownload -->
+<?php
 
-        classe("0", "0");
 
-        if ($nb_cat > 0 || $nb_download > 0) {
-            echo "<div style=\"text-align: center;\"><br /><small><i> ( " . _THEREIS . "&nbsp;" . $nb_download. "&nbsp;" . _FILES . " &amp; " . $nb_cat. "&nbsp;" . _NBCAT . "&nbsp;" . _INDATABASE . " ) </i></small></div><br /><br />\n";
-        } else {
-            echo "<div style=\"text-align: center;\"><br />" . _NODOWNLOADINDB . "</div><br /><br />\n";
-        }
     }
 
     function categorie($cat) {

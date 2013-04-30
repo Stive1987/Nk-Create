@@ -1,0 +1,26 @@
+#moduleDownload {
+}
+#moduleDownload .span2 {
+	margin-left: 0;
+}
+#moduleDownload .span2 input[type="text"] {
+	padding: 0;
+	height: auto;
+	margin-top: 10px;
+	width: 200px;
+}
+
+#main .author-box .inner-border {
+	display: block;
+	overflow: hidden;
+}
+#main .author-box .author figure {
+	width: 155px;
+}
+#main .author-box .author .description {
+	margin-left: 180px;
+}
+
+#main img:hover {
+    opacity: 1;
+}
