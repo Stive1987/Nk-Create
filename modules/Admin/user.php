@@ -40,7 +40,8 @@ if ($visiteur == 9)
         . "</div></div>\n"
         . "<div class=\"tab-content\" id=\"tab2\"><div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _NAMEMEMBERS . "</a> | "
         . "</b>" . _ADDUSER . "<b> | "
-        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a><br />"
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a><br />"
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_rank\">" . _RANKMANAGEMENT . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_valid\">" . _USERVALIDATION . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_ip\">" . _BAN . "</a></b></div><br />\n"
@@ -54,8 +55,14 @@ if ($visiteur == 9)
         . "<tr><td><b>" . _ICQ . " : </b></td><td><input type=\"text\" name=\"icq\" size=\"15\" maxlength=\"15\" /></td></tr>\n"
         . "<tr><td><b>" . _MSN . " : </b></td><td><input type=\"text\" name=\"msn\" size=\"30\" maxlength=\"40\" /></td></tr>\n"
         . "<tr><td><b>" . _AIM . " : </b></td><td><input type=\"text\" name=\"aim\" size=\"30\" maxlength=\"30\" /></td></tr>\n"
-        . "<tr><td><b>" . _YIM . " : </b></td><td><input type=\"text\" name=\"yim\" size=\"30\" maxlength=\"30\" /></td></tr>\n"
-        . "<tr><td><b>" . _COUNTRY . " :</b></td><td><select name=\"country\">\n";
+        . "<tr><td><b>" . _YIM . " : </b></td><td><input type=\"text\" name=\"yim\" size=\"30\" maxlength=\"30\" /></td></tr>\n";
+		
+		$sql_select = mysql_query("SELECT nom FROM ". $nuked['prefix'] ."_users_config WHERE active = '1' AND del = '1'");
+        while (list($name) = mysql_fetch_array($sql_select))
+        {
+        echo "<tr><td><b>" . $name . " : </b></td><td><input type=\"text\" name=\"" . $name . "\" size=\"30\" maxlength=\"30\" /></td></tr>\n";
+		}
+        echo "<tr><td><b>" . _COUNTRY . " :</b></td><td><select name=\"country\">\n";
 
         if ($language == "french") $pays = "France.gif";
 
@@ -199,8 +206,17 @@ if ($visiteur == 9)
         . "<tr><td><b>" . _ICQ . " : </b></td><td><input type=\"text\" name=\"icq\" size=\"15\" maxlength=\"15\" value=\"" . $icq . "\" /></td></tr>\n"
         . "<tr><td><b>" . _MSN . " : </b></td><td><input type=\"text\" name=\"msn\" size=\"30\" maxlength=\"40\" value=\"" . $msn . "\" /></td></tr>\n"
         . "<tr><td><b>" . _AIM . " : </b></td><td><input type=\"text\" name=\"aim\" size=\"30\" maxlength=\"30\" value=\"" . $aim . "\" /></td></tr>\n"
-        . "<tr><td><b>" . _YIM . " : </b></td><td><input type=\"text\" name=\"yim\" size=\"30\" maxlength=\"30\" value=\"" . $yim . "\" /></td></tr>\n"
-        . "<tr><td><b>" . _COUNTRY . " :</b></td><td><select name=\"country\">\n";
+        . "<tr><td><b>" . _YIM . " : </b></td><td><input type=\"text\" name=\"yim\" size=\"30\" maxlength=\"30\" value=\"" . $yim . "\" /></td></tr>\n";
+		
+		$sql_select = mysql_query("SELECT nom FROM ". $nuked['prefix'] ."_users_config WHERE active = '1' AND del = '1'");
+        while (list($name) = mysql_fetch_array($sql_select))
+        {
+		$sql_donnee = mysql_query("SELECT " . $name . " FROM " . USER_TABLE . " WHERE id = '" . $id_user . "'");
+		list($donnee) = mysql_fetch_array($sql_donnee);
+        echo "<tr><td><b>" . $name . " : </b></td><td><input type=\"text\" name=\"" . $name . "\" size=\"30\" maxlength=\"30\" value=\"" . $donnee . "\" /></td></tr>\n";
+		}
+		
+        echo "<tr><td><b>" . _COUNTRY . " :</b></td><td><select name=\"country\">\n";
 
         $rep = Array();
         $handle = @opendir("images/flags");
@@ -379,7 +395,7 @@ if ($visiteur == 9)
                 $ordre = 0;
             }
 
-            $nick = htmlentities($nick, ENT_QUOTES, 'ISO-8859-1');
+            $nick = htmlentities($nick, ENT_QUOTES);
 
             $signature = mysql_real_escape_string(stripslashes($signature));
             $email = mysql_real_escape_string(stripslashes($email));
@@ -390,16 +406,23 @@ if ($visiteur == 9)
             $url = mysql_real_escape_string(stripslashes($url));
             $avatar = mysql_real_escape_string(stripslashes($avatar));
 
-            $signature = nkHtmlEntityDecode($signature);
-            $email = nkHtmlEntities($email);
-            $icq = nkHtmlEntities($icq);
-            $msn = nkHtmlEntities($msn);
-            $aim = nkHtmlEntities($aim);
-            $yim = nkHtmlEntities($yim);
-            $url = nkHtmlEntities($url);
-            $avatar = nkHtmlEntities($avatar);
+            $signature = html_entity_decode($signature);
+            $email = htmlentities($email);
+            $icq = htmlentities($icq);
+            $msn = htmlentities($msn);
+            $aim = htmlentities($aim);
+            $yim = htmlentities($yim);
+            $url = htmlentities($url);
+            $avatar = htmlentities($avatar);
 
             $sql = mysql_query("UPDATE " . USER_TABLE . " SET team = '" . $team . "', team2 = '" . $team2 . "', team3 = '" . $team3 . "', rang = '" . $rang . "', ordre = '" . $ordre . "', pseudo = '" . $nick . "', mail = '" . $mail . "', email = '" . $email . "', icq = '" . $icq . "', msn = '" . $msn . "', aim = '" . $aim . "', yim = '" . $yim . "', url = '" . $url . "', country = '" . $country . "', niveau = '" . $niveau . "', " . $cryptpass . "game = '" . $game . "', avatar = '" . $avatar . "', signature = '" . $signature . "' WHERE id = '" . $id_user . "'");
+			
+            $sql_select = mysql_query("SELECT nom FROM ". $nuked['prefix'] ."_users_config WHERE active = '1' AND del = '1'");
+            while (list($name) = mysql_fetch_array($sql_select))
+            {
+            $new_value = mysql_real_escape_string(stripslashes($_REQUEST[$name]));
+            $upd = mysql_query("UPDATE " . USER_TABLE . " SET ".$name." = '" . $new_value . "' WHERE id = '" . $id_user . "'");
+            }
 
             // Action
             $texteaction = "". _ACTIONMODIFUSER .": ".$nick."";
@@ -453,7 +476,7 @@ if ($visiteur == 9)
             } while (mysql_num_rows(mysql_query('SELECT * FROM ' . USER_TABLE . ' WHERE id=\'' . $id_user . '\' LIMIT 1')) != 0);
             
             $date = time();
-            $nick = htmlentities($nick, ENT_QUOTES, 'ISO-8859-1');
+            $nick = htmlentities($nick, ENT_QUOTES);
 
             $signature = mysql_real_escape_string(stripslashes($signature));
             $email = mysql_real_escape_string(stripslashes($email));
@@ -464,16 +487,25 @@ if ($visiteur == 9)
             $url = mysql_real_escape_string(stripslashes($url));
             $avatar = mysql_real_escape_string(stripslashes($avatar));
 
-            $signature = nkHtmlEntityDecode($signature);
-            $email = nkHtmlEntities($email);
-            $icq = nkHtmlEntities($icq);
-            $msn = nkHtmlEntities($msn);
-            $aim = nkHtmlEntities($aim);
-            $yim = nkHtmlEntities($yim);
-            $url = nkHtmlEntities($url);
-            $avatar = nkHtmlEntities($avatar);
+            $signature = html_entity_decode($signature);
+            $email = htmlentities($email);
+            $icq = htmlentities($icq);
+            $msn = htmlentities($msn);
+            $aim = htmlentities($aim);
+            $yim = htmlentities($yim);
+            $url = htmlentities($url);
+            $avatar = htmlentities($avatar);
+			
+			
 
-            $sql = mysql_query("INSERT INTO " . USER_TABLE . "  ( `id` , `team` , `team2` , `team3` , `rang` , `ordre` , `pseudo` , `mail` , `email` , `icq` , `msn` , `aim` , `yim` , `url` , `pass` , `niveau` , `date` , `avatar` , `signature` , `user_theme` , `user_langue` , `game` , `country` , `count` ) VALUES ( '" . $id_user . "' , '" . $team . "' , '" . $team2 . "' , '" . $team3 . "' , '" . $rang . "' , '' , '" . $nick . "' , '" . $mail . "' , '" . $email . "' , '" . $icq . "' , '" . $msn . "' , '" . $aim . "' , '" . $yim . "' , '" . $url . "' , '" . $cryptpass . "' , '" . $niveau . "' , '" . $date . "' , '" . $avatar . "' , '" . $signature . "' , '' , '' , '" . $game . "' , '" . $country . "' , '' )");
+            $sql = mysql_query("INSERT INTO " . USER_TABLE . "  ( `id` , `team` , `team2` , `team3` , `rang` , `ordre` , `pseudo` , `mail` , `email` , `icq` , `msn` , `aim` , `yim` , `url` , `pass` , `niveau` , `date` , `avatar` , `signature` , `user_theme` , `user_langue` , `game` , `country` , `count`) VALUES ( '" . $id_user . "' , '" . $team . "' , '" . $team2 . "' , '" . $team3 . "' , '" . $rang . "' , '' , '" . $nick . "' , '" . $mail . "' , '" . $email . "' , '" . $icq . "' , '" . $msn . "' , '" . $aim . "' , '" . $yim . "' , '" . $url . "' , '" . $cryptpass . "' , '" . $niveau . "' , '" . $date . "' , '" . $avatar . "' , '" . $signature . "' , '' , '' , '" . $game . "' , '" . $country . "' , '' )");
+			
+            $sql_select = mysql_query("SELECT nom FROM ". $nuked['prefix'] ."_users_config WHERE active = '1' AND del = '1'");
+            while (list($name) = mysql_fetch_array($sql_select))
+            {
+            $new_value = mysql_real_escape_string(stripslashes($_REQUEST[$name]));
+            $upd = mysql_query("UPDATE " . USER_TABLE . " SET ".$name." = '" . $new_value . "' WHERE pseudo = '" . $nick . "'");
+            }
             // Action
             $texteaction = "". _ACTIONADDUSER .": ".$nick."";
             $acdate = time();
@@ -558,7 +590,8 @@ if ($visiteur == 9)
         . "<input type=\"hidden\" name=\"page\" value=\"user\" /></div></form>\n"
         . "<div style=\"text-align: center;\">" . _NAMEMEMBERS . "<b> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=add_user\">" . _ADDUSER . "</a> | "
-        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a><br />"
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a><br />"
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_rank\">" . _RANKMANAGEMENT . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_valid\">" . _USERVALIDATION . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_ip\">" . _BAN . "</a></b></div><br />\n";
@@ -641,10 +674,15 @@ if ($visiteur == 9)
         . "<td style=\"width: 10%;\" align=\"center\"><b>" . _EDIT . "</b></td>\n"
         . "<td style=\"width: 10%;\" align=\"center\"><b>" . _DELETE . "</b></td></tr>\n";
 
-        $req = "SELECT UT.id, UT.pseudo, UT.niveau, UT.date, ST.date FROM " . USER_TABLE . " as UT LEFT OUTER JOIN " . SESSIONS_TABLE . " as ST ON UT.id=ST.user_id WHERE UT.niveau > 0 " . $and . " ORDER BY " . $order_by . " LIMIT " . $start . ", " . $nb_membres;
-        $sql = mysql_query($req);
-        while (list($id_user, $pseudo, $niveau, $date, $last_used) = mysql_fetch_array($sql))
-        {
+            $dbsUser = ' SELECT id, pseudo, niveau, date, lastDate
+                               FROM ' . USER_TABLE . '
+                               WHERE niveau > 0
+                               ORDER BY niveau DESC
+							   LIMIT ' . $start . ', ' . $nb_membres;
+            $dbeUser = mysql_query($dbsUser);
+			
+            for ($i = 0;$i < $nb_membres;$i++) {
+                if (list($id_user, $pseudo, $niveau, $date, $last_used) = mysql_fetch_array($dbeUser)) {
             $date = nkDate($date);
             $last_used == '' ? $last_used = '-' : $last_used = nkDate($last_used);
 
@@ -666,6 +704,7 @@ if ($visiteur == 9)
             }
 
             echo "</td></tr>\n";
+				}
         }
 
         if ($count == 0 && $_REQUEST['query'] != "")
@@ -712,7 +751,8 @@ if ($visiteur == 9)
         . "</div></div>\n"
         . "<div class=\"tab-content\" id=\"tab2\"><div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _NAMEMEMBERS . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=add_user\">" . _ADDUSER . "</a> | "
-        . "</b>" . _TEAMMANAGEMENT . "<b><br />"
+        . "</b>" . _TEAMMANAGEMENT . "<b> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a><br />"
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_rank\">" . _RANKMANAGEMENT . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_valid\">" . _USERVALIDATION . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_ip\">" . _BAN . "</a></b></div><br />\n"
@@ -737,7 +777,7 @@ if ($visiteur == 9)
                 {
                     $sql_game = mysql_query("SELECT name FROM " . GAMES_TABLE . " WHERE id = '" . $game . "'");
                     list($game_name) = mysql_fetch_array($sql_game);
-                    $game_name = nkHtmlEntities($game_name);
+                    $game_name = htmlentities($game_name);
                 }
                 else
                 {
@@ -927,8 +967,8 @@ if ($visiteur == 9)
         . "</div></div>\n"
         . "<div class=\"tab-content\" id=\"tab2\"><div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _NAMEMEMBERS . "</a> | "
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=add_user\">" . _ADDUSER . "</a> | "
-        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a><br />"
-        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_rank\">" . _RANKMANAGEMENT . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a><br />"
         . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_valid\">" . _USERVALIDATION . "</a> | "
         . "</b>" . _BAN . "</div><br />\n"
         . "<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">\n"
@@ -946,7 +986,7 @@ if ($visiteur == 9)
         {
             while (list($ip_id, $ip, $pseudo, $email) = mysql_fetch_array($sql))
             {
-                $pseudo = nkHtmlEntities($pseudo);
+                $pseudo = htmlentities($pseudo);
 
 
                 echo "<tr>\n"
@@ -1122,7 +1162,8 @@ if ($visiteur == 9)
     . "</div></div>\n"
     . "<div class=\"tab-content\" id=\"tab2\"><div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _NAMEMEMBERS . "</a> | "
     . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=add_user\">" . _ADDUSER . "</a> | "
-    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a><br />"
+    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a> | "
+    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a><br />"
     . "</b>" . _RANKMANAGEMENT . "<b> | "
     . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_valid\">" . _USERVALIDATION . "</a> | "
     . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_ip\">" . _BAN . "</a></b></div><br />\n"
@@ -1268,7 +1309,7 @@ if ($visiteur == 9)
         $sql = mysql_query("SELECT id, titre FROM " . TEAM_RANK_TABLE . " ORDER BY ordre, titre");
         while (list($rid, $titre) = mysql_fetch_array($sql))
         {
-            $titre = nkHtmlEntities($titre);
+            $titre = htmlentities($titre);
 
             echo "<option value=\"" . $rid . "\">" . $titre . "</option>\n";
         }
@@ -1288,9 +1329,9 @@ if ($visiteur == 9)
     $corps = $pseudo . ", " . _VALIDREGISTRATION . "\r\n" . $nuked['url'] . "/index.php?file=User&op=login_screen\r\n\r\n\r\n" . $nuked['name'] . " - " . $nuked['slogan'];
     $from = "From: " . $nuked['name'] . " <" . $nuked['mail'] . ">\r\nReply-To: " . $nuked['mail'];
 
-    $subject = @nkHtmlEntityDecode($subject);
-    $corps = @nkHtmlEntityDecode($corps);
-    $from = @nkHtmlEntityDecode($from);
+    $subject = @html_entity_decode($subject);
+    $corps = @html_entity_decode($corps);
+    $from = @html_entity_decode($from);
 
     mail($mail, $subject, $corps, $from);
 
@@ -1320,8 +1361,9 @@ if ($visiteur == 9)
     . "</div></div>\n"
     . "<div class=\"tab-content\" id=\"tab2\"><div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _NAMEMEMBERS . "</a> | "
     . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=add_user\">" . _ADDUSER . "</a> | "
-    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a><br />"
-    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_rank\">" . _RANKMANAGEMENT . "</a> | "
+    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_cat\">" . _TEAMMANAGEMENT . "</a> | "
+    . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a><br />"
+	. "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_rank\">" . _RANKMANAGEMENT . "</a> | "
     . "</b>" . _USERVALIDATION . "<b> | "
     . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_ip\">" . _BAN . "</a></b></div><br />\n"
     . "<table width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\">\n"
@@ -1420,11 +1462,535 @@ if ($visiteur == 9)
         else
             return false;
     }
-    
+	
+    function main_col()
+    {
+        global $nuked, $user, $language;
+		
+     echo"<script type=\"text/javascript\">\n"
+        . "<!--\n"
+        . "\n"
+        . "	function delcol(name) {\n"
+        . "		if (confirm('" . _DELETECOL . " '+name+' ! " . _CONFIRM . "')) {\n"
+        . "			document.location.href = 'index.php?file=Admin&page=user&op=del_col&name='+name;\n"
+        . "		}\n"
+        . "	}\n"
+        . "\n"
+        . "// -->\n"
+        . "</script>\n";
+
+     echo "<div class=\"content-box\">\n"
+        . "<div class=\"content-box-header\"><h3>" . _USERADMIN . "</h3>\n"
+        . "<div style=\"text-align:right;\"><a href=\"help/" . $language . "/user.php\" rel=\"modal\">\n"
+        . "<img style=\"border: 0;\" src=\"help/help.gif\" alt=\"\" title=\"" . _HELP . "\" /></a>\n"
+        . "</div></div>\n"
+        . "<div class=\"tab-content\" id=\"tab2\">\n"
+        . "<div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _RETOUR . "</a> | "
+        . "</b>" . _COLMANAGEMENT . "</a><b> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=css_col\">" . _CSSOPTION . "</a> | "
+		. "<a href=\"index.php?file=Admin&amp;page=user&amp;op=option_col\">" . _COLOPTION . "</a></b></div><br />\n"
+
+		. "<div style=\"margin: 12px\"><div class=\"notification attention png_bg\"><div>" . _NOTIFONE . "</div></div></div>\n"
+		
+		. "<form method=\"post\" action=\"index.php?file=Admin&amp;page=user&amp;op=send_col\" enctype=\"multipart/form-data\" >\n"
+		. "<table width=\"100\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\"><tr>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:20%\">" . _COLNAME . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:5%\">" . _COLACTIV . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:10%\">" . _COLTAI . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:30%\">" . _COLLOGR . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:30%\">" . _COLLOGNR . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:5%\">" . _COLDEL . "</td>\n";
+		
+		$sql_select = mysql_query("SELECT nom, img, active, del, width FROM ". $nuked['prefix'] ."_users_config ORDER BY del DESC ,nom ASC");
+        while (list($name, $img, $active, $del, $width) = mysql_fetch_array($sql_select))
+        {
+			if($active == 1) { $checked[$name] = "checked=\"checked\""; }
+            $width = str_replace("%", "", $width);
+			$img = explode("|", $img);
+			if($del == 1) { $delete[$name] = "<a href=\"javascript:delcol('" . mysql_real_escape_string(stripslashes($name)) . "');\"><img style=\"border: 0;\" src=\"images/del.gif\" alt=\"\" title=\"" . _DELTHISCOL . "\" /></a>"; } else { $del[$name] = ""; }
+			
+     echo "<tr><td style=\"vertical-align:middle;text-align:center;\"> <span style=\"font-weight: bold;text-transform: capitalize;\">" . $name . "</span></td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input type=\"checkbox\" name=\"" . $name . "[active]\" value=\"1\" " . $checked[$name] . "></td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input type=\"text\"name=\"" . $name . "[width]\" size=\"3\" value=\"" . $width . "\" /> %</td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input size=\"45\" type=\"text\" name=\"" . $name . "[img0]\" value=\"" . $img[0] . "\"/>&nbsp;
+			                     <input type=\"file\" size=\"31\" name=\"" . $name . "up0\" /></td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input size=\"45\" type=\"text\" name=\"" . $name . "[img1]\" value=\"" . $img[1] . "\"/>&nbsp;
+			                     <input type=\"file\" size=\"31\" name=\"" . $name . "up1\" /></td>
+	           <td style=\"vertical-align:middle;text-align:center;\">" . $delete[$name] . "</td>
+		   </tr>\n";
+		}
+
+     echo "</table><div style=\"text-align: center;\"><br />
+	 <input type=\"submit\" value=\"" . _SAUV . "\" /> | 
+	 <input type=\"button\" onclick=\"self.location.href='index.php?file=Admin&amp;page=user'\" value=\"" . _BACK . "\" /> | 
+	 <input type=\"button\" onclick=\"self.location.href='index.php?file=Admin&amp;page=user&amp;op=add_col'\" value=\"" . _ADD . "\" /> | 
+	 </div></form><br /></div></div>\n";
+	}
+	
+	function del_col($name) {
+		global $nuked, $user;
+		
+		$sql_voir = mysql_query("SELECT del FROM ". $nuked['prefix'] ."_users_config WHERE nom = '" . $name . "'");
+		list($del) = mysql_fetch_array($sql_voir);
+		
+		if($del == '0') {
+		echo "<div class=\"notification information png_bg\">\n"
+		   . "<div>\n"
+		   . _COLERREUR . "\n"
+		   . "</div>\n"
+		   . "</div>\n";
+		redirect("index.php?file=Admin&page=user&op=main_col", 2);
+		}
+		else
+		{
+		$sql = mysql_query("DELETE FROM ". $nuked['prefix'] ."_users_config WHERE nom = '" . $name . "'");
+		$sql_del= mysql_query("ALTER TABLE " . USER_TABLE . " DROP COLUMN " . $name . "");
+
+		$texteaction = "". _ACTIONDELCOL .": ".$name."";
+		$acdate = time();
+		$sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '".$texteaction."')");
+
+		echo "<div class=\"notification success png_bg\">\n"
+		   . "<div>\n"
+		   . _ACTIONDELTCOLS . "\n"
+		   . "</div>\n"
+		   . "</div>\n";
+		redirect("index.php?file=Admin&page=user&op=main_col", 2);
+		}
+	}
+	
+	function add_col() {
+		global $nuked, $user;
+
+     echo "<div class=\"content-box\">\n"
+        . "<div class=\"content-box-header\"><h3>" . _USERADMIN . "" . _ADDCOL . "</h3>\n"
+        . "<div style=\"text-align:right;\"><a href=\"help/" . $language . "/user.php\" rel=\"modal\">\n"
+        . "<img style=\"border: 0;\" src=\"help/help.gif\" alt=\"\" title=\"" . _HELP . "\" /></a>\n"
+        . "</div></div>\n"
+        . "<div class=\"tab-content\" id=\"tab2\"></div>\n"
+
+		. "<form method=\"post\" action=\"index.php?file=Admin&amp;page=user&amp;op=add_send_col\" enctype=\"multipart/form-data\" >\n"
+		. "<table width=\"100\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\"><tr>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:20%\">" . _COLNAME . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:10%\">" . _COLACTIV . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:10%\">" . _COLTAI . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:30%\">" . _COLLOGR . "</td>\n"
+		. "<td style=\"text-align:center;font-weight:bold;width:30%\">" . _COLLOGNR . "</td>\n";
+		
+     echo "<tr><td style=\"vertical-align:middle;text-align:center;\"><input type=\"text\"name=\"name\" size=\"50\" /></td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input type=\"checkbox\" name=\"active\" value=\"1\"></td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input type=\"text\"name=\"width\" size=\"3\" /> %</td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input size=\"45\" type=\"text\" name=\"img0\" />&nbsp;
+			                                                          <input type=\"file\" size=\"31\" name=\"up0\" /></td>
+	           <td style=\"vertical-align:middle;text-align:center;\"><input size=\"45\" type=\"text\" name=\"img1\" />&nbsp;
+			                                                          <input type=\"file\" size=\"31\" name=\"up1\" /></td>
+		   </tr>\n";
+		   
+     echo "</table><div style=\"text-align: center;\"><br />
+	 <input type=\"submit\" value=\"" . _SAUV . "\" />  | 
+	 <input type=\"button\" onclick=\"self.location.href='index.php?file=Admin&amp;page=user'\" value=\"" . _BACK . "\" />
+	 </div></form><br /></div></div>\n";
+	}
+
+	function add_send_col($name, $active, $width, $img0, $up0, $img1, $up1) {
+		global $nuked, $user;
+
+		if(empty($name)) {
+		echo "<div class=\"notification error png_bg\">\n"
+		     . "<div>\n"
+		     . "<div style=\"text-align: center;\"><br />" . _ERROREMPTY . "</div><br />\n"
+		     . "</div></div>\n";
+			 redirect("index.php?file=Admin&page=user&op=add_col", 2);}
+		else {
+		$invalide = array ('@[éèêëÊË]@i','@[àâäÂÄ]@i','@[îïÎÏ]@i','@[ûùüÛÜ]@i','@[ôöÔÖ]@i','@[ç]@i','@[ ]@i','@[^a-zA-Z0-9_]@');
+		$replace = array ('e','a','i','u','o','c','_','');
+		$name = preg_replace($invalide, $replace, $name);
+		
+		$name = mysql_real_escape_string(stripslashes($name));
+		$img0 = mysql_real_escape_string(stripslashes($img0));
+		$img1 = mysql_real_escape_string(stripslashes($img1));
+		
+		$new_img_1 = $img0;
+		$new_img_2 = $img1;
+		$racine_up = "upload/Members/";
+		$racine_down = "";
+		$ecrase_screen = 1;
+		
+		if ($_FILES['up0']['name'] != "") {
+			$screenname = $_FILES['up0']['name'];
+			$ext = pathinfo($_FILES['up0']['name'], PATHINFO_EXTENSION);
+			$filename2 = str_replace($ext, "", $screenname);
+			$url_screen = $racine_up . $filename2 . $ext;
+
+			if (!is_file($url_screen) || $ecrase_screen == 1) {
+				if ($ext == "jpg" || $ext == "jpeg" || $ext == "JPG" || $ext == "JPEG" || $ext == "gif" || $ext == "GIF" || $ext == "png" || $ext == "PNG") {
+					move_uploaded_file($_FILES['up0']['tmp_name'], $url_screen) or die ("Upload screen failed !!!");
+					@chmod ($url_screen, 0644);
+				} else {
+					echo "<div class=\"notification error png_bg\">\n"
+					   . "<div>\n"
+					   . "<div style=\"text-align: center;\">" . _ERRORIMG . "</div><br />\n"
+					   . "</div></div>\n";
+					redirect("index.php?file=Admin&page=user&op=main_col", 2);
+					adminfoot();
+					footer();
+					die;
+				}
+			} else {
+				$deja_screen = 1;
+			}
+
+			$url_full_screen = $racine_down . $url_screen;
+			$new_img_1 = $url_full_screen;
+		}
+		if ($_FILES['up1']['name'] != "") {
+			$screenname = $_FILES['up1']['name'];
+			$ext = pathinfo($_FILES['up1']['name'], PATHINFO_EXTENSION);
+			$filename2 = str_replace($ext, "", $screenname);
+			$url_screen = $racine_up . $filename2 . $ext;
+
+			if (!is_file($url_screen) || $ecrase_screen == 1) {
+				if ($ext == "jpg" || $ext == "jpeg" || $ext == "JPG" || $ext == "JPEG" || $ext == "gif" || $ext == "GIF" || $ext == "png" || $ext == "PNG") {
+					move_uploaded_file($_FILES['up1']['tmp_name'], $url_screen) or die ("Upload screen failed !!!");
+					@chmod ($url_screen, 0644);
+				} else {
+					echo "<div class=\"notification error png_bg\">\n"
+					   . "<div>\n"
+					   . "<div style=\"text-align: center;\">" . _ERRORIMG . "</div><br />\n"
+					   . "</div></div>\n";
+					redirect("index.php?file=Admin&page=user&op=main_col", 2);
+					adminfoot();
+					footer();
+					die;
+				}
+			} else {
+				$deja_screen = 1;
+			}
+
+			$url_full_screen = $racine_down . $url_screen;
+			$new_img_2 = $url_full_screen;
+		}
+		
+		$sql_add = mysql_query("INSERT INTO ". $nuked['prefix'] ."_users_config  (`nom`, `img`, `active`, `del`, `width`)  VALUES ('".$name."', '" . $new_img_1 . '|' . $new_img_2 . "', '".$active."', '1', '".$width."')");
+		$sql_alter = mysql_query("ALTER TABLE " . USER_TABLE . " ADD COLUMN (" . $name . " varchar(80))");
+
+		$texteaction = "". _ACTIONADDCOL .": ".$name."";
+		$acdate = time();
+		$sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '".$texteaction."')");
+		echo "<div class=\"notification success png_bg\">\n"
+		   . "<div>\n"
+		   . _ACTIONADDCOLS . "\n"
+		   . "</div>\n"
+		   . "</div>\n";
+		redirect("index.php?file=Admin&page=user&op=main_col", 2);
+		}
+	}
+	
+    function send_col()
+    {
+        global $nuked, $user, $language;
+
+		$sql_select = mysql_query("SELECT nom, img, active FROM ". $nuked['prefix'] ."_users_config");
+        while (list($first_nom, $first_img, $first_active) = mysql_fetch_array($sql_select))
+        {			
+		$new_img_1 =mysql_real_escape_string(stripslashes($_REQUEST[$first_nom]['img0']));
+		$new_img_2 = mysql_real_escape_string(stripslashes($_REQUEST[$first_nom]['img1']));
+		$racine_up = "upload/Members/";
+		$racine_down = "";
+		$ecrase_screen = 1;
+		
+		if ($_FILES[$first_nom . "up0"]['name'] != "") {
+			$screenname = $_FILES[$first_nom . "up0"]['name'];
+			$ext = pathinfo($_FILES[$first_nom . "up0"]['name'], PATHINFO_EXTENSION);
+			$filename2 = str_replace($ext, "", $screenname);
+			$url_screen = $racine_up . $filename2 . $ext;
+
+			if (!is_file($url_screen) || $ecrase_screen == 1) {
+				if ($ext == "jpg" || $ext == "jpeg" || $ext == "JPG" || $ext == "JPEG" || $ext == "gif" || $ext == "GIF" || $ext == "png" || $ext == "PNG") {
+					move_uploaded_file($_FILES[$first_nom . "up0"]['tmp_name'], $url_screen) or die ("Upload screen failed !!!");
+					@chmod ($url_screen, 0644);
+				} else {
+					echo "<div class=\"notification error png_bg\">\n"
+					   . "<div>\n"
+					   . "<div style=\"text-align: center;\">" . _ERRORIMG . "</div><br />\n"
+					   . "</div></div>\n";
+					redirect("index.php?file=Admin&page=user&op=main_col", 2);
+					adminfoot();
+					footer();
+					die;
+				}
+			} else {
+				$deja_screen = 1;
+			}
+
+			$url_full_screen = $racine_down . $url_screen;
+			$new_img_1 = $url_full_screen;
+		}
+		if ($_FILES[$first_nom . "up1"]['name'] != "") {
+			$screenname = $_FILES[$first_nom . "up1"]['name'];
+			$ext = pathinfo($_FILES[$first_nom . "up1"]['name'], PATHINFO_EXTENSION);
+			$filename2 = str_replace($ext, "", $screenname);
+			$url_screen = $racine_up . $filename2 . $ext;
+
+			if (!is_file($url_screen) || $ecrase_screen == 1) {
+				if ($ext == "jpg" || $ext == "jpeg" || $ext == "JPG" || $ext == "JPEG" || $ext == "gif" || $ext == "GIF" || $ext == "png" || $ext == "PNG") {
+					move_uploaded_file($_FILES[$first_nom . "up1"]['tmp_name'], $url_screen) or die ("Upload screen failed !!!");
+					@chmod ($url_screen, 0644);
+				} else {
+					echo "<div class=\"notification error png_bg\">\n"
+					   . "<div>\n"
+					   . "<div style=\"text-align: center;\">" . _ERRORIMG . "</div><br />\n"
+					   . "</div></div>\n";
+					redirect("index.php?file=Admin&page=user&op=main_col", 2);
+					adminfoot();
+					footer();
+					die;
+				}
+			} else {
+				$deja_screen = 1;
+			}
+
+			$url_full_screen = $racine_down . $url_screen;
+			$new_img_2 = $url_full_screen;
+		}
+			if ($_REQUEST[$first_nom]['active'] != "1") $_REQUEST[$first_nom]['active'] = "0";
+			(empty($_REQUEST[$first_nom]['width'])) ? $_REQUEST[$first_nom]['width'] = 'auto' : $_REQUEST[$first_nom]['width'] = $_REQUEST[$first_nom]['width'];
+			$upd = mysql_query("UPDATE ". $nuked['prefix'] ."_users_config SET img = '" . $new_img_1 . '|' . $new_img_2 . "', active = '" . $_REQUEST[$first_nom]['active'] . "', width = '" . $_REQUEST[$first_nom]['width'] . "%' WHERE nom = '" . $first_nom . "'");
+        }
+		
+		$texteaction = "". _ACTIONMODIFCOL ."";
+		$acdate = time();
+		$sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '". mysql_real_escape_string($texteaction) ."')");
+
+		echo "<div class=\"notification success png_bg\">\n"
+		   . "<div>\n"
+		   . _NOTIFCOLMODIF . "\n"
+		   . "</div>\n"
+		   . "</div>\n";
+
+		redirect("index.php?file=Admin&page=user", 2);
+		
+    }
+
+	function css_col() {
+		global $nuked, $user;
+		
+     echo "<div class=\"content-box\">\n"
+        . "<div class=\"content-box-header\"><h3>" . _USERADMIN . "</h3>\n"
+        . "<div style=\"text-align:right;\"><a href=\"help/" . $language . "/user.php\" rel=\"modal\">\n"
+        . "<img style=\"border: 0;\" src=\"help/help.gif\" alt=\"\" title=\"" . _HELP . "\" /></a>\n"
+        . "</div></div>\n"
+        . "<div class=\"tab-content\" id=\"tab2\">\n"
+        . "<div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _RETOUR . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a></b> | "
+        . "" . _CSSOPTION . "<b> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=option_col\">" . _COLOPTION . "</a></b></div><br />\n"
+		
+		. "<script type=\"text/javascript\" src=\"modules/Admin/color/jscolor.js\"></script>\n"
+		. "<script type=\"text/javascript\" src=\"http://code.jquery.com/jquery-latest.js\"></script>\n"
+		. "<script type=\"text/javascript\" src=\"modules/Admin/color/stive.js\"></script>\n";
+		
+		$sql_css = mysql_query("SELECT name, value FROM ". $nuked['prefix'] ."_users_css");
+	    while ($row = mysql_fetch_array($sql_css)) $css[$row['name']] = htmlentities($row['value'], ENT_NOQUOTES);
+	    unset($sql_css, $row);
+		
+     echo "<form method=\"post\" action=\"index.php?file=Admin&amp;page=user&amp;op=css_send_col\" id=\"form\">\n"
+		. "<table width=\"100\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\"><tr>\n"
+		. "<td style=\"font-weight:bold;width:15%;\">" . _COLBORD . " :</td><td><input type=\"text\" name=\"border\" size=\"10\" class=\"color\" value=\"" . $css['border'] . "\" /></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLBGTIT . " : </td><td><input type=\"text\" name=\"titre\" size=\"10\" class=\"color\" value=\"" . $css['titre'] . "\" /></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLBGCONT1 . " : </td><td><input type=\"text\" name=\"bg1\" size=\"10\" class=\"color\" value=\"" . $css['bg1'] . "\" /></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLBGCONT2 . " : </td><td><input type=\"text\" name=\"bg2\" size=\"10\" class=\"color\" value=\"" . $css['bg2'] . "\" /></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLTXTTIT . " : </td><td><input type=\"text\" name=\"txttitre\" size=\"10\" class=\"color\" value=\"" . $css['txttitre'] . "\" /></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLTXTLINK . " : </td><td><input type=\"text\" name=\"txtlinks\" size=\"10\" class=\"color\" value=\"" . $css['txtlinks'] . "\" /></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLTXT . " : </td><td><input type=\"text\" name=\"txt\" size=\"10\" class=\"color\" value=\"" . $css['txt'] . "\" /></td></tr>\n";
+
+     echo "</table><div style=\"text-align: center;\"><br />\n"
+		. "<input type=\"submit\" value=\"" . _SAUV . "\" /> |\n" 
+		. "<input type=\"button\" onclick=\"self.location.href='index.php?file=Admin&amp;page=user'\" value=\"" . _BACK . "\" />\n"
+		. "</div></form><br /></div></div>\n"
+	 
+		. "<div class=\"content-box\">\n"
+        . "<div class=\"content-box-header\"><h3>Aper&ccedil;u du style</h3>\n"
+        . "<div style=\"text-align:right;\">\n"
+        . "</div></div>\n"
+        . "<div class=\"tab-content\" id=\"tab2\"><br />\n";
+
+        $bordure = ' border: 1px solid  #' . $css['border'] . '; ';
+        $titre = ' background: #' . $css['titre'] . '; color: #' . $css['txttitre'] . '; font-weight: bold; text-align: center; border-bottom: 1px solid  #f9f9f5; padding: 4px 0; ';
+        $letter	 = ' background: #eceadb; color: #000; text-align: center; padding: 4px 0;';
+        $body = ' margin-top: 10px; border: 1px solid  #f9f9f5; padding: 1px; display:table; width: 100%; ';
+        $body_titre = 'background: #c1bfb5; color: #000; font-weight: bold; text-align: center; border-bottom: 1px solid  #f9f9f5; padding: 1px; display: table-header-group; ';
+        $body_contenue = 'background: #' . $css['bg1'] . '; color: #' . $css['txt'] . '; border-bottom: 1px solid  #f9f9f5; padding: 1px; display: table-row-group; text-align: center;';
+        $body_contenu_odd = 'background: #' . $css['bg2'] . '; color: #' . $css['txt'] . '; border-bottom: 1px solid  #f9f9f5; padding: 1px; display: table-row-group; text-align: center;';
+        $col = 'width: auto; text-align: center; border-right: 1px solid #f9f9f5; display:table-cell; text-transform: capitalize;';
+
+     echo "<div style=\"" . $bordure . "\" class=\"border\"><div style=\"" . $titre . "\" class=\"border titre\">" . _COLLISTMEMB . "</div>
+	 <div style=\"" . $letter . "\" class=\"bg1\">
+		[ <a style=\"color:" . $css['txtlinks'] . "\" class=\"txtlinks\" href=\"#\">" . _ALL . "</a> | ";
+		$alpha = array ("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "Autres");
+        $num = count($alpha) - 1;
+        $counter = 0;
+        while (list(, $lettre) = each($alpha)){
+            echo "<a style=\"color:" . $css['txtlinks'] . "\" class=\"txtlinks\" href=\"index.php?file=Members&amp;letter=" . $lettre . "\">" . $lettre . "</a>";
+            if ($counter <= 25){
+                echo " | ";
+            } 
+            else {
+                echo "";
+            }
+            $counter++;
+        } 
+        echo " ]
+		</div>
+      </div>
+	  
+      <div style=\"" . $body . "\" class=\"border\">
+        <div style=\"" . $body_titre . "\" class=\"border titre\">
+          <div style=\"" . $col . " width: 5%;\"></div>
+          <div style=\"" . $col . "\">" . _PSEUDO . "</div>
+		  <div style=\"" . $col . "\">" . _TEST . "</div>
+		  <div style=\"" . $col . "\">" . _TEST . "</div>
+        </div>
+        <div style=\"" . $body_contenue . "\" class=\"border bg1 txt\">
+          <div style=\"" . $col . " width: 5%;\"></div>
+          <div style=\"" . $col . "\">" . _TEST . "</div>
+		  <div style=\"" . $col . "\">" . _TEST . "</div>
+		  <div style=\"" . $col . "\">" . _TEST . "</div>
+        </div>
+        <div style=\"" . $body_contenu_odd . "\" class=\"border bg2 txt\">
+          <div style=\"" . $col . " width: 5%;\"></div>
+          <div style=\"" . $col . "\">" . _TEST . "</div>
+		  <div style=\"" . $col . "\">" . _TEST . "</div>
+		  <div style=\"" . $col . "\">" . _TEST . "</div>
+        </div>
+        </div>\n";
+	}
+
+	function css_send_col($border, $titre, $bg1, $bg2, $txttitre, $txtlinks, $txt) {
+		global $nuked, $user;
+		
+	    $sql0 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $border . "' WHERE name = 'border'");
+		$sql1 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $titre . "' WHERE name = 'titre'");
+		$sql2 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $bg1 . "' WHERE name = 'bg1'");
+	    $sql3 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $bg2 . "' WHERE name = 'bg2'");
+		$sql4 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $txttitre . "' WHERE name = 'txttitre'");
+		$sql5 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $txtlinks . "' WHERE name = 'txtlinks'");
+	    $sql6 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $txt . "' WHERE name = 'txt'");
+		
+		$texteaction = "". _ACTIONMODIFCSS ."";
+		$acdate = time();
+		$sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '". mysql_real_escape_string($texteaction) ."')");
+		
+		echo "<div class=\"notification success png_bg\">\n"
+		   . "<div>\n"
+		   . _CSSMODIF . "\n"
+		   . "</div>\n"
+		   . "</div>\n";
+
+		redirect("index.php?file=Admin&page=user&op=css_col", 2);
+}
+
+	function option_col() {
+		global $nuked, $user;
+		
+     echo "<div class=\"content-box\">\n"
+        . "<div class=\"content-box-header\"><h3>" . _USERADMIN . "</h3>\n"
+        . "<div style=\"text-align:right;\"><a href=\"help/" . $language . "/user.php\" rel=\"modal\">\n"
+        . "<img style=\"border: 0;\" src=\"help/help.gif\" alt=\"\" title=\"" . _HELP . "\" /></a>\n"
+        . "</div></div>\n"
+        . "<div class=\"tab-content\" id=\"tab2\">\n"
+        . "<div style=\"text-align: center;\"><b><a href=\"index.php?file=Admin&amp;page=user\">" . _RETOUR . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=main_col\">" . _COLMANAGEMENT . "</a> | "
+        . "<a href=\"index.php?file=Admin&amp;page=user&amp;op=css_col\">" . _CSSOPTION . "</a></b> | "
+        . "" . _COLOPTION . "</div><br />\n";
+		
+		$sql_css = mysql_query("SELECT name, value FROM ". $nuked['prefix'] ."_users_css");
+	    while ($row = mysql_fetch_array($sql_css)) $option[$row['name']] = htmlentities($row['value'], ENT_NOQUOTES);
+	    unset($sql_css, $row);
+		
+		($option['logo'] == 1) ? $checked_logo = "checked=\"checked\"":'';
+		($option['at'] == 1) ? $checked_at = "checked=\"checked\"":'';
+		($option['aff'] == 1) ? $checked_aff = "checked=\"checked\"":'';
+
+		
+     echo "<form method=\"post\" action=\"index.php?file=Admin&amp;page=user&amp;op=option_send_col\" id=\"form\">\n"
+		. "<table width=\"100\" border=\"0\" cellspacing=\"1\" cellpadding=\"2\"><tr>\n"
+		. "<td style=\"font-weight:bold;width:25%;\">" . _COLACTILOG . "</td><td><input type=\"checkbox\" name=\"logo\" value=\"1\" " . $option['logo'] . " " . $checked_logo . "></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLACTIMAIL . "</td><td><input type=\"checkbox\" name=\"at\" value=\"1\" " . $option['at'] . " " . $checked_at . "></td></tr>\n"
+		. "<td style=\"font-weight:bold;\">" . _COLACTIVIEW . "</td><td><input type=\"checkbox\" name=\"aff\" value=\"1\" " . $option['aff'] . " " . $checked_aff . "></td></tr>\n";
+		
+     echo "</table><div style=\"text-align: center;\"><br />\n"
+		. "<input type=\"submit\" value=\"" . _SAUV . "\" /> |\n" 
+		. "<input type=\"button\" onclick=\"self.location.href='index.php?file=Admin&amp;page=user'\" value=\"" . _BACK . "\" />\n"
+		. "</div></form><br />\n"
+		
+		. "<div style=\"margin: 12px\"><div class=\"notification attention png_bg\"><div>" . _NOTIFTWO . "</div></div></div>\n"
+		. "</div></div>\n";
+}
+	function option_send_col($logo, $at, $aff) {
+		global $nuked, $user;
+		
+		($logo == '1') ? $logo = '1' : $logo = '0';
+		($at == '1') ? $at = '1' : $at = '0';
+		($aff == '1') ? $aff = '1' : $aff = '0';
+		
+	    $sql0 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $logo . "' WHERE name = 'logo'");
+		$sql1 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $at . "' WHERE name = 'at'");
+		$sql2 = mysql_query("UPDATE ". $nuked['prefix'] ."_users_css SET value = '" . $aff . "' WHERE name = 'aff'");
+		
+		$texteaction = "". _ACTIONMODIFOPT ."";
+		$acdate = time();
+		$sqlaction = mysql_query("INSERT INTO ". $nuked['prefix'] ."_action  (`date`, `pseudo`, `action`)  VALUES ('".$acdate."', '".$user[0]."', '". mysql_real_escape_string($texteaction) ."')");
+		
+		echo "<div class=\"notification success png_bg\">\n"
+		   . "<div>\n"
+		   . _OPTMODIF . "\n"
+		   . "</div>\n"
+		   . "</div>\n";
+
+		redirect("index.php?file=Admin&page=user&op=css_col", 2);
+}
+
     switch ($_REQUEST['op'])
     {
+        case "main_col":
+            main_col();
+            break;
+			
+		case "del_col":
+			del_col($_REQUEST['name']);
+			break;
+
+		case "add_col":
+			add_col();
+			break;
+			
+		case "add_send_col":
+			add_send_col($_REQUEST['name'], $_REQUEST['active'], $_REQUEST['width'], $_REQUEST['img0'], $_REQUEST['up0'], $_REQUEST['img1'], $_REQUEST['up1']);
+			break;	
+
+        case "send_col":
+            send_col($_POST);
+            break;
+			
+        case "css_col":
+            css_col();
+            break;	
+			
+        case "css_send_col":
+            css_send_col($_REQUEST['border'], $_REQUEST['titre'], $_REQUEST['bg1'], $_REQUEST['bg2'], $_REQUEST['txttitre'], $_REQUEST['txtlinks'], $_REQUEST['txt']);
+            break;		
+			
+        case "option_col":
+            option_col();
+            break;
+			
+        case "option_send_col":
+            option_send_col($_REQUEST['logo'], $_REQUEST['at'], $_REQUEST['aff']);
+            break;
+
         case "update_user":
-            update_user($_REQUEST['id_user'], $_REQUEST['team'], $_REQUEST['team2'], $_REQUEST['team3'], $_REQUEST['rang'], $_REQUEST['nick'], $_REQUEST['mail'], $_REQUEST['email'], $_REQUEST['url'], $_REQUEST['icq'], $_REQUEST['msn'], $_REQUEST['aim'], $_REQUEST['yim'], $_REQUEST['country'], $_REQUEST['niveau'], $_REQUEST['pass_reg'], $_REQUEST['pass_conf'], $_REQUEST['pass'], $_REQUEST['game'], $_REQUEST['avatar'], $_REQUEST['signature'], $_REQUEST['old_nick']);
+            update_user($_REQUEST['id_user'], $_REQUEST['team'], $_REQUEST['team2'], $_REQUEST['team3'], $_REQUEST['rang'], $_REQUEST['nick'], $_REQUEST['mail'], $_REQUEST['email'], $_REQUEST['url'], $_REQUEST['icq'], $_REQUEST['msn'], $_REQUEST['aim'], $_REQUEST['yim'], $_REQUEST['country'], $_REQUEST['niveau'], $_REQUEST['pass_reg'], $_REQUEST['pass_conf'], $_REQUEST['pass'], $_REQUEST['game'], $_REQUEST['avatar'], $_REQUEST['signature'], $_REQUEST['old_nick'], $_POST);
             break;
 
         case "add_user":
@@ -1432,7 +1998,7 @@ if ($visiteur == 9)
             break;
 
         case "do_user":
-            do_user($_REQUEST['team'], $_REQUEST['team2'], $_REQUEST['team3'], $_REQUEST['rang'], $_REQUEST['nick'], $_REQUEST['mail'], $_REQUEST['email'], $_REQUEST['url'], $_REQUEST['icq'], $_REQUEST['msn'], $_REQUEST['aim'], $_REQUEST['yim'], $_REQUEST['country'], $_REQUEST['niveau'], $_REQUEST['pass_reg'], $_REQUEST['pass_conf'], $_REQUEST['game'], $_REQUEST['avatar'], $_REQUEST['signature']);
+            do_user($_REQUEST['team'], $_REQUEST['team2'], $_REQUEST['team3'], $_REQUEST['rang'], $_REQUEST['nick'], $_REQUEST['mail'], $_REQUEST['email'], $_REQUEST['url'], $_REQUEST['icq'], $_REQUEST['msn'], $_REQUEST['aim'], $_REQUEST['yim'], $_REQUEST['country'], $_REQUEST['niveau'], $_REQUEST['pass_reg'], $_REQUEST['pass_conf'], $_REQUEST['game'], $_REQUEST['avatar'], $_REQUEST['signature'], $_POST);
             break;
 
         case "edit_user":

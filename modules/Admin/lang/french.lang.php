@@ -491,4 +491,47 @@ A toute l\'équipe nuked-klan.org, ainsi qu\'à sa communauté qui nous a permis de
 <h3>Licence GNU :</h3>
 Merci de ne pas supprimer le <acronym title="Le terme copyleft est un double jeu de mots faisant référence au copyright traditionnel" style="text-decoration: underline">copyleft</acronym> par respect pour le cms et respecter la licence GNU.<br />');
 
+# Patches Membres [Stive]
+define("_SAUV","Sauvegarder");
+define("_COLMANAGEMENT","Gestion des colonnes");
+define("_RETOUR","Retour");
+define("_CSSOPTION","Style des colonnes");
+define("_COLOPTION","Options");
+define("_NOTIFONE","<b>[Retire 20%]</b> Les 20% sont pris par le flag et le pseudo, laisse vide pour (auto)");
+define("_NOTIFTWO","<b>[BETA]</b> Version Test<span style=\"float:right;\">1.00<span>");
+define("_COLNAME","Nom de la colonne");
+define("_COLACTIV","Activer");
+define("_COLTAI","Taille");
+define("_COLLOGR","Logo champ remplie");
+define("_COLLOGNR","Logo champ vide ");
+define("_COLDEL","Effacer");
+define("_ERROREMPTY","Le nom de la colonne ne peut être vide");
+define("_DELTHISCOL","Supprimer cette Ligne");
+define("_DELETECOL","Supprimer cette Ligne");
+define("_ACTIONDELCOL","a supprimé la colonne ");
+define("_ACTIONMODIFCOL","a modifié une colonne");
+define("_ACTIONMODIFCSS","a modifié le styles des colonnes");
+define("_ACTIONMODIFOPT","a modifié les options des colonnes");
+define("_ACTIONADDCOL","a ajouté une colonnes");
+define("_ACTIONADDCOLS","Colonne ajouté avec succès.");
+define("_ACTIONDELTCOLS","Colonne supprimé avec succès.");
+define("_COLERREUR","Impossible de supprimé cette ligne");
+define("_NOTIFCOLMODIF","Colonne modifié avec succès.");
+define("_CSSMODIF","Style modifié avec succès.");
+define("_OPTMODIF","Options modifié avec succès.");
+define("_ERRORIMG","Ceci n'est pas une image !!!");
+define("_COLBORD","Bordure");
+define("_COLBGTIT","Background Titre");
+define("_COLBGCONT1","Background Contenue");
+define("_COLBGCONT2","Background Contenue 2");
+define("_COLTXTTIT","Couleur Du Titre");
+define("_COLTXTLINK","Couleur Des Liens");
+define("_COLTXT","Couleur Du Texte");
+define("_COLLISTMEMB","Liste des membres");
+define("_TEST","Test");
+define("_PSEUDO","Pseudo");
+define("_COLACTILOG","Activer les logos :");
+define("_COLACTIMAIL","Remplace @ par [at] ");
+define("_ADDCOL"," : ajouter une colonne");
+define("_COLACTIVIEW","Afficher tous les membres");
 ?>

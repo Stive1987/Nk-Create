@@ -56,4 +56,5 @@ define("_FINDSTUFF","Trouver ses contributions");
 define("_DATEUSER","Date d'arrivée");
 define("_LASTVISIT","Dernière visite");
 define("_REQUESTPV","Ecrire un message privé");
+define("_COPYLEFTMEMBERS","Patche membres Nk 1.7.9 version 1.0 cree par Stive <a href=\"http://www.palacewar.eu\" title=\"PalaceWaR\">PalaceWaR</a> - <a href=\"http://www.nk-create.be\" title=\"Nk-Create\">Nk-Create</a>");
 ?>
