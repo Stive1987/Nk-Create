@@ -3,8 +3,27 @@ include_once 'themes/Nk-Create_VIII/menu/menu.php';
 function top() 
 {
 	global $nuked, $user, $file, $topMenu;
+	
+	$sql = mysql_query("SELECT ip FROM " . USER_TABLE . " WHERE ip ='" . $user[3] . "'");
+	$nb_ip = mysql_num_rows($sql);
+	list($ip_suers) = mysql_fetch_array($sql);
+	if($nb_ip == 0) {	
+            $dbuUserIpUpdate = ' UPDATE '.USER_TABLE.' 
+                                 SET ip = "' . $user[3] . '"
+                                 WHERE id = "' . $user[0] . '"';
+            $dbeUserIpUpdate = mysql_query($dbuUserIpUpdate);
+		}
+	else if($user[3] != $ip_suers) {
+            $dbuUserIpUpdate = ' UPDATE '.USER_TABLE.' 
+                                 SET ip = "' . $user[3] . '"
+                                 WHERE id = "' . $user[0] . '"';
+            $dbeUserIpUpdate = mysql_query($dbuUserIpUpdate);
+	}
+            $dbuUserTimeUpdate = ' UPDATE '.USER_TABLE.' 
+                                 SET lastDate = "' . time() . '"
+                                 WHERE id = "' . $user[0] . '"';
+            $dbeUserTimeUpdate = mysql_query($dbuUserTimeUpdate);
 ?>
-
 <!DOCTYPE html>
 <html lang="fr"> 
 <head>
@@ -242,8 +261,7 @@ if($_REQUEST['file'] == 'News') {
                     <div class='inner'>
                         <h3>Suivez-nous sur Facebook</h3>
                         <div class="follow-us">
-                        	<iframe src="//www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2FNk.Create&amp;width=292&amp;height=290&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color=FFFFFF&amp;header=true&amp;appId=258777514148715" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:292px; height:290px;" allowTransparency="true">
-                            </iframe>
+                        <iframe src="http://www.facebook.com/plugins/likebox.php?href=http%3A%2F%2Fwww.facebook.com%2FNk.Create&amp;width=292&amp;height=258&amp;show_faces=true&amp;colorscheme=light&amp;stream=false&amp;border_color=%23fff&amp;header=false&amp;appId=225987124123858" style="border:none; overflow:hidden; width:292px; height:258px;"></iframe>
                         </div>
                     </div>
                 </div>
@@ -285,10 +303,16 @@ if($_REQUEST['file'] == 'News') {
             js = d.createElement(s); js.id = id;
             js.src = "//connect.facebook.net/fr_FR/all.js#xfbml=1";
             fjs.parentNode.insertBefore(js, fjs);
-          }(document, 'script', 'facebook-jssdk'));</script>
-          <script type="text/javascript" src="https://apis.google.com/js/plusone.js">
-            {lang: 'fr'}
+          }(document, 'script', 'facebook-jssdk'));
           </script>
+          <script type="text/javascript">
+          	window.___gcfg = {lang: 'fr'};
+          	(function() {
+				var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+				po.src = 'https://apis.google.com/js/plusone.js';
+				var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+          	})();
+</script>
 		  <script type="text/javascript">
           	var _gaq = _gaq || [];
           	_gaq.push(['_setAccount', 'UA-25332959-6']);
@@ -347,6 +371,7 @@ function block_gauche($block)
                 <div class="widget">
                     <div class='inner'>
                         <?php echo $block['content']; ?>
+                    </div>
                 </div>
 <?php 
 }

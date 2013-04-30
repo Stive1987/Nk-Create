@@ -53,7 +53,7 @@ function affich_block_login($blok){
 				<img id="logoLoginL" src="../../images/logue_Login.png" alt="logoLogin" />
 				<div id="contentLogin">
 					<div id="avatarLogin">
-						<img src="' . $avatar . '"" alt="' . $user[2] . ' avatar" />
+						<img src="' . $avatar . '" alt="' . $user[2] . ' avatar" />
 					</div>
 					<div id="rightLogin">
 						<a class="profilLogin" href="index.php?file=User&amp;op=edit_account">Profil</a>
