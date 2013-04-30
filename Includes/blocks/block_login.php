@@ -18,26 +18,51 @@ function affich_block_login($blok){
     $blok['content'] = '';
 
 	$c = 0;
-	
+		
 	if($login != 'off'){
 		if (!$user){
-			$blok['content'] = '<form action="index.php?file=User&amp;nuked_nude=index&amp;op=login" method="post">'."\n"
-			. '<table style="margin-left: auto;margin-right: auto;text-align: left;">'."\n"
-			. '<tr><td>' . _NICK . ' :</td><td><input type="text" name="pseudo" size="10" maxlength="250" /></td></tr>'."\n"
-			. '<tr><td>' . _PASSWORD . ' :</td><td><input type="password" name="pass" size="10" maxlength="15" /></td></tr>'."\n"
-			. '<tr><td colspan="2"><input type="checkbox" class="checkbox" name="remember_me" value="ok" checked="checked" />&nbsp;' . _SAVE . '</td></tr>'."\n"
-			. '<tr><td colspan="2" align="center"><input type="submit" value="' . _BLOGIN . '" /></td></tr>'."\n"
-			. '<tr><td colspan="2"><a href="index.php?file=User&amp;op=reg_screen">' . _REGISTER . '</a><br />'."\n"
-			. '<a href="index.php?file=User&amp;op=oubli_pass">' . _FORGETPASS . '</a> ?</td></tr></table></form>'."\n";
+		   $blok['content'] = '
+			<div id="login">
+				<div id="h3Login">Connecter-vous &agrave; votre compte</div>
+				<img id="logoLogin" src="../../images/communitylogin.png" alt="logoLogin" />
+				<form action="index.php?file=User&amp;nuked_nude=index&amp;op=login" method="post">
+					<div id="inputLogin">
+						<div>
+							<label>Pseudo</label><input placeholder="Pseudo" type="text" name="pseudo" size="10" maxlength="250" required />
+						</div>
+						<div>
+							<label>Password</label><input placeholder="Mot de passe" type="password" name="pass" size="10" maxlength="15" required />
+						</div>
+					</div>
+					<div id="buttonLogin">
+						<input type="submit" value="' . _BLOGIN . '" />
+						<input type="reset" value="reset" />
+					</div>
+					<input type="hidden" name="remember_me" value="ok" />
+				</form>
+			</div>';
 		}
 		else{
-			$blok['content'] = '<div style="text-align: center;">' . _WELCOME . ', <b>' . $user[2] . '</b><br /><br />'."\n";
-			if ($avatar != 'off'){
 				$sql_avatar=mysql_query('SELECT avatar FROM ' . USER_TABLE . ' WHERE id = \'' . $user[0] . '\' ');
 				list($avatar_url) = mysql_fetch_array($sql_avatar);
-				if($avatar_url) $blok['content'] .= '<img src="' . $avatar_url . '" style="border:1px ' . $bgcolor3 . ' dashed; width:100px; background:' . $bgcolor1 . '; padding:2px;" alt="' . $user[2] . ' avatar" /><br /><br />';
-			}
-			$blok['content'] .= '<a href="index.php?file=User">' . _ACCOUNT . '</a> / <a href="index.php?file=User&amp;nuked_nude=index&amp;op=logout">' . _LOGOUT . '</a></div>'."\n";
+				if(empty($avatar_url)) { $avatar = 'images/no_avatar.png'; } else { $avatar = $avatar_url; }
+				if($user[5] != 0) { $mp = 'mpGoLogin'; } else { $mp = 'mpLogin'; }
+		   $blok['content'] = '
+			<div id="login">
+				<div id="h3Login">Bienvenue sur votre compte</div>
+				<img id="logoLoginL" src="../../images/logue_Login.png" alt="logoLogin" />
+				<div id="contentLogin">
+					<div id="avatarLogin">
+						<img src="' . $avatar . '"" alt="' . $user[2] . ' avatar" />
+					</div>
+					<div id="rightLogin">
+						<a class="profilLogin" href="index.php?file=User&amp;op=edit_account">Profil</a>
+						<a class="preflLogin" href="index.php?file=User&amp;op=edit_pref">Pr&eacute;f&eacute;rences </a>
+						<a class="' . $mp . '" href="index.php?file=Userbox">Message Priv&eacute;</a>
+						<a class="logoutLogin" href="index.php?file=User&amp;nuked_nude=index&amp;op=logout">D&eacute;connexion</a>
+					</div>
+				</div>
+			</div>';
 		}
 		$c++;
 	}
@@ -129,6 +154,8 @@ function affich_block_login($blok){
 	
 		$c++;
    }
+   
+
 
    return $blok;
 }
